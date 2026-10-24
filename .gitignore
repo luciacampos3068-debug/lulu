@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env.local
+.env.*.local
+jardim-de-memorias-interativo.html
+jardim-de-memorias-final.zip
+firebase-debug.log

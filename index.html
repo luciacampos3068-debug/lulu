@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jardim de Memórias — Scrapbook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", sans-serif;
+      color: #382b26;
+      background: #f7f1e9;
+      --page: #f7f1e9;
+      --panel: #fffdf9;
+      --ink: #382b26;
+      --muted: #725e52;
+      --border: #e5d8c9;
+      --accent: #76533f;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 30px 18px;
+      background: var(--page);
+      color: var(--ink);
+      transition: background .2s, color .2s;
+    }
+
+    main { width: min(100%, 980px); margin: 0 auto; }
+    h1, h2, h3 { font-family: Georgia, serif; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 2.5rem); }
+    h2 { margin-top: 0; }
+    p { line-height: 1.5; }
+    .intro { margin: 0 0 22px; color: var(--muted); }
+    .section { margin-top: 22px; }
+    .panel, .card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--panel);
+      box-shadow: 0 8px 24px #49331b12;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 1.1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .fields { display: grid; gap: 14px; }
+    label { display: grid; gap: 7px; font-weight: 600; }
+    input, textarea, select, button { font: inherit; }
+    input[type="text"], input[type="password"], input[type="date"], input[type="file"],
+    textarea, select {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid #d9cbbb;
+      border-radius: 9px;
+      background: #fff;
+      color: #382b26;
+    }
+    input[type="color"] {
+      width: 100%;
+      height: 43px;
+      padding: 4px;
+      border: 1px solid #d9cbbb;
+      border-radius: 9px;
+      background: #fff;
+      cursor: pointer;
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    button {
+      min-height: 41px;
+      padding: 9px 14px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(.9); }
+    button.secondary {
+      border: 1px solid #cbb9a7;
+      background: transparent;
+      color: var(--ink);
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 17px; }
+    .status { min-height: 1.4em; margin: 12px 0 0; color: #416b42; font-size: .92rem; }
+    .status.error { color: #a12d22; }
+    .hero {
+      display: flex;
+      min-height: 365px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+      overflow: hidden;
+      border-radius: 13px;
+      background-color: #b98f72;
+      background-position: center;
+      background-size: cover;
+      color: #fffaf0;
+      text-align: center;
+      text-shadow: 0 2px 9px #24160dcc;
+    }
+    .profile {
+      display: grid;
+      width: 105px;
+      height: 105px;
+      margin-bottom: 16px;
+      place-items: center;
+      overflow: hidden;
+      border: 3px solid #fffaf0;
+      border-radius: 50%;
+      background: #f1dfc9;
+      color: #76533f;
+      font-size: 2rem;
+      text-shadow: none;
+    }
+    .profile img { display: none; width: 100%; height: 100%; object-fit: cover; }
+    .hero h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.4rem); overflow-wrap: anywhere; }
+    .hero p { margin: 9px 0 0; overflow-wrap: anywhere; }
+    .hero .phrase { max-width: 36ch; margin-top: 22px; font-style: italic; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+    .toolbar label { flex: 1 1 190px; }
+    .toolbar button { flex: 0 0 auto; }
+    .entry-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 13px; }
+    .polaroid, .envelope, .timeline-card, .capsule-card {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--panel);
+      overflow-wrap: anywhere;
+    }
+    .polaroid { box-shadow: 0 4px 12px #49331b12; }
+    .polaroid img { width: 100%; max-height: 240px; margin-bottom: 8px; object-fit: cover; border-radius: 7px; }
+    .polaroid h3, .envelope h3, .timeline-card h3 { margin: 4px 0 8px; }
+    .polaroid p, .envelope p, .timeline-card p { margin: 0; white-space: pre-wrap; }
+    .timeline-card { border-left: 5px solid #c98974; }
+    .record-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .record-actions button { min-height: 35px; padding: 7px 10px; font-size: .9rem; }
+    .record-actions .delete-button { background: #9a4137; }
+    .empty { color: var(--muted); }
+    .music-player { width: 100%; margin-top: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 9px; }
+    .stat { padding: 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, var(--panel)); text-align: center; }
+    .stat strong { display: block; margin-top: 4px; }
+    .lock-screen {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: #211912dd;
+    }
+    .lock-screen[hidden] { display: none; }
+    .lock-card { width: min(100%, 390px); }
+    .lock-card h2 { margin-bottom: 8px; }
+    .theme-vintage { --page: #f5ecd9; --panel: #fffaf0; --ink: #4a3b2f; --muted: #75624f; --border: #e1d2b9; --accent: #76533f; }
+    .theme-floral { --page: #fdeff2; --panel: #fff9fa; --ink: #5a3d46; --muted: #81616a; --border: #efd5dc; --accent: #a25d72; }
+    .theme-cottage { --page: #eef4e5; --panel: #fbfff7; --ink: #41503d; --muted: #65745f; --border: #d7e1cb; --accent: #61764f; }
+    .theme-night { color-scheme: dark; --page: #1d2330; --panel: #2a3140; --ink: #f4f0e8; --muted: #c0b8ad; --border: #465064; --accent: #765b87; }
+    .theme-night input, .theme-night textarea, .theme-night select { background: #202634; color: #f4f0e8; border-color: #596276; }
+    .theme-night button.secondary { color: var(--ink); border-color: var(--border); }
+    @media (max-width: 720px) {
+      body { padding: 22px 14px; }
+      .layout { grid-template-columns: 1fr; }
+      .hero { min-height: 320px; }
+      .panel, .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lock-screen" id="lockScreen">
+    <section class="panel lock-card" aria-labelledby="lock-title">
+      <h2 id="lock-title">🔒 Diário Protegido</h2>
+      <p id="lock-description">Defina um PIN para proteger este diário neste navegador.</p>
+      <p class="empty">O PIN é uma proteção visual local; os dados não são criptografados.</p>
+      <form id="pin-form" class="fields">
+        <label for="pinInput">PIN (4 a 12 dígitos)
+          <input type="password" id="pinInput" inputmode="numeric" pattern="[0-9]{4,12}" minlength="4" maxlength="12" required autocomplete="current-password">
+        </label>
+        <button id="pin-submit" type="submit">Definir PIN</button>
+        <p class="status" id="pin-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+
+  <main>
+    <h1>Jardim de Memórias</h1>
+    <p class="intro">Seu scrapbook pessoal para guardar momentos, cartas e planos.</p>
+    <section class="panel section" aria-labelledby="account-heading">
+      <h2 id="account-heading">Conta online</h2>
+      <form id="login-form" class="toolbar">
+        <label for="email">E-mail
+          <input type="email" id="email" autocomplete="username" required>
+        </label>
+        <label for="password">Senha
+          <input type="password" id="password" autocomplete="current-password" required>
+        </label>
+        <button id="login-button" type="submit">Entrar</button>
+        <button class="secondary" id="logout-button" type="button" hidden>Sair</button>
+      </form>
+      <p class="status" id="auth-status" role="status" aria-live="polite"></p>
+    </section>
+    <section class="panel section" id="adminPanel" hidden>
+      <h2>Administração</h2>
+      <form id="invite-form" class="toolbar">
+        <label for="editorEmail">E-mail do editor
+          <input type="email" id="editorEmail" required>
+        </label>
+        <button type="submit">Convidar editor</button>
+      </form>
+      <p class="status" id="admin-status" role="status" aria-live="polite"></p>
+      <h3>Perfis</h3>
+      <div id="profiles-list" class="entry-list"></div>
+      <h3>Atividade recente</h3>
+      <div id="activity-list" class="entry-list"></div>
+    </section>
+    <div class="actions">
+      <button class="secondary" id="lock-button" type="button" hidden>🔒 Bloquear diário</button>
+    </div>
+
+    <section class="layout" aria-label="Capa">
+      <section class="panel" aria-labelledby="editor-title">
+        <h2 id="editor-title">Editar capa</h2>
+        <form id="cover-form">
+          <div class="fields">
+            <label for="titulo">Título
+              <input id="titulo" type="text" maxlength="100" placeholder="🌻 Jardim de Memórias">
+            </label>
+            <label for="subtitulo">Subtítulo
+              <input id="subtitulo" type="text" maxlength="160" placeholder="Um cantinho para guardar histórias">
+            </label>
+            <label for="frase">Frase
+              <textarea id="frase" maxlength="300" placeholder="Escreva uma frase especial..."></textarea>
+            </label>
+            <label for="cor">Cor da capa
+              <input id="cor" type="color" value="#b98f72">
+            </label>
+            <label for="perfil-upload">Foto de perfil
+              <input id="perfil-upload" type="file" accept="image/*">
+            </label>
+            <button class="secondary" id="clear-profile" type="button">Remover foto de perfil</button>
+            <label for="capa-upload">Imagem de fundo
+              <input id="capa-upload" type="file" accept="image/*">
+            </label>
+            <button class="secondary" id="clear-background" type="button">Remover imagem de fundo</button>
+          </div>
+          <div class="actions">
+            <button type="submit">Salvar capa</button>
+            <button class="secondary" id="reset-button" type="button">Restaurar padrão</button>
+          </div>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="preview-heading">
+        <h2 id="preview-heading">Prévia da capa</h2>
+        <article class="hero" id="hero">
+          <div class="profile" aria-label="Foto de perfil">
+            <span id="profile-placeholder" aria-hidden="true">🌻</span>
+            <img id="foto-perfil-preview" alt="Foto de perfil">
+          </div>
+          <h2 id="titulo-exibicao">🌻 Jardim de Memórias</h2>
+          <p id="subtitulo-exibicao"></p>
+          <p class="phrase" id="frase-exibicao"></p>
+        </article>
+      </section>
+    </section>
+
+    <section class="panel section" aria-labelledby="customize-heading">
+      <h2 id="customize-heading">Personalizar o jardim</h2>
+      <div class="layout">
+        <div class="card">
+          <h3>🎨 Temas</h3>
+          <div class="toolbar">
+            <label for="themeSelect">Escolha um tema
+              <select id="themeSelect">
+                <option value="vintage">Vintage</option>
+                <option value="floral">Floral</option>
+                <option value="cottage">Cottagecore</option>
+                <option value="night">Céu Noturno</option>
+              </select>
+            </label>
+            <button id="apply-theme" type="button">Aplicar</button>
+            <button class="secondary" id="dark-mode" type="button">🌙 Modo Noturno</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🎵 Música da capa</h3>
+          <label for="musicUpload">Escolher arquivo de áudio
+            <input type="file" id="musicUpload" accept="audio/*">
+          </label>
+          <audio id="musicPlayer" class="music-player" controls></audio>
+          <button class="secondary" id="clear-music" type="button">Remover música</button>
+          <p class="status" id="music-status" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout section" aria-label="Criar registros">
+      <section class="panel">
+        <h2>📸 Nova memória</h2>
+        <form id="memory-form" class="fields">
+          <label for="memory-title">Título
+            <input id="memory-title" type="text" maxlength="120" required>
+          </label>
+          <label for="memory-text">História
+            <textarea id="memory-text" maxlength="3000" required></textarea>
+          </label>
+          <label for="memory-mood">Como você se sentiu?
+            <select id="memory-mood">
+              <option value="">Sem emoção selecionada</option>
+              <option value="😊">😊 Feliz</option>
+              <option value="❤️">❤️ Amor</option>
+              <option value="🥹">🥹 Emocionado</option>
+              <option value="😌">😌 Em paz</option>
+              <option value="💪">💪 Forte</option>
+            </select>
+          </label>
+          <label for="memory-image">Foto (opcional)
+            <input id="memory-image" type="file" accept="image/*">
+          </label>
+          <div class="actions">
+            <button id="memory-submit" type="submit">Guardar memória</button>
+            <button class="secondary" id="memory-cancel" type="button" hidden>Cancelar edição</button>
+          </div>
+        </form>
+        <p class="status" id="memory-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel">
+        <h2>💌 Escrever uma carta</h2>
+        <form id="letter-form" class="fields">
+          <label for="letter-title">Título
+            <input id="letter-title" type="text" maxlength="120" required>
+          </label>
+          <label for="letter-text">Carta
+            <textarea id="letter-text" maxlength="5000" required></textarea>
+          </label>
+          <div class="actions">
+            <button id="letter-submit" type="submit">Guardar carta</button>
+            <button class="secondary" id="letter-cancel" type="button" hidden>Cancelar edição</button>
+          </div>
+        </form>
+        <p class="status" id="letter-status" role="status" aria-live="polite"></p>
+      </section>
+    </section>
+
+    <section class="panel section">
+      <h2>📅 Cápsula do tempo</h2>
+      <form id="capsule-form" class="fields">
+        <label for="capsule-date">Data para lembrar
+          <input id="capsule-date" type="date" required>
+        </label>
+        <label for="capsule-text">Mensagem
+          <textarea id="capsule-text" maxlength="3000" required></textarea>
+        </label>
+        <div class="actions">
+          <button id="capsule-submit" type="submit">Guardar cápsula</button>
+          <button class="secondary" id="capsule-cancel" type="button" hidden>Cancelar edição</button>
+        </div>
+      </form>
+      <p class="status" id="capsule-status" role="status" aria-live="polite"></p>
+      <div class="entry-list section" id="capsuleList" aria-live="polite"></div>
+    </section>
+
+    <section class="panel section">
+      <h2>🌱 Linha do tempo</h2>
+      <div id="timeline" class="entry-list" aria-live="polite"></div>
+    </section>
+
+    <section class="panel section">
+      <h2>📚 Memórias guardadas</h2>
+      <div id="memories" class="entry-list" aria-live="polite"></div>
+    </section>
+
+    <section class="panel section">
+      <h2>💌 Cartas guardadas</h2>
+      <div id="letters" class="entry-list" aria-live="polite"></div>
+    </section>
+
+    <section class="panel section">
+      <h2>💭 Emoções registradas</h2>
+      <form id="mood-form" class="toolbar">
+        <label for="mood-select">Registrar uma emoção
+          <select id="mood-select" required>
+            <option value="">Selecione</option>
+            <option value="😊">😊 Feliz</option>
+            <option value="❤️">❤️ Amor</option>
+            <option value="🥹">🥹 Emocionado</option>
+            <option value="😌">😌 Em paz</option>
+            <option value="💪">💪 Forte</option>
+          </select>
+        </label>
+        <button type="submit">Registrar emoção</button>
+      </form>
+      <p class="status" id="mood-status" role="status" aria-live="polite"></p>
+      <div id="emotion-stats" class="stats" aria-live="polite"></div>
+    </section>
+
+    <section class="panel section">
+      <h2>Backup</h2>
+      <p>Exporte uma cópia das memórias, cartas, cápsulas, emoções e configurações salvas.</p>
+      <button id="backup-button" type="button">Exportar backup completo</button>
+      <form id="import-form" class="fields section">
+        <label for="backup-file">Importar backup JSON (os registros serão adicionados)
+          <input id="backup-file" type="file" accept=".json,application/json" required>
+        </label>
+        <button type="submit">Importar backup</button>
+      </form>
+      <p class="status" id="backup-status" role="status" aria-live="polite"></p>
+    </section>
+    <p class="status" id="database-status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script type="module">
+    "use strict";
+    import { supabase } from "./supabase.js";
+
+    const DATABASE_NAME = "JardimMemoriasDB";
+    const DATABASE_VERSION = 1;
+    const DEFAULT_TITLE = "🌻 Jardim de Memórias";
+    const DEFAULT_COLOR = "#b98f72";
+    const EMOTIONS = ["😊", "❤️", "🥹", "😌", "💪"];
+    let db;
+    let musicObjectUrl;
+    let editingMemory;
+    let editingLetter;
+    let editingCapsule;
+    let activeUser;
+    let activeRole;
+    let memoriesChannel;
+
+    const $ = selector => document.querySelector(selector);
+    const status = $("#status");
+    const databaseStatus = $("#database-status");
+    const hero = $("#hero");
+    const tituloInput = $("#titulo");
+    const subtituloInput = $("#subtitulo");
+    const fraseInput = $("#frase");
+    const corPrincipal = $("#cor");
+    const tituloExibicao = $("#titulo-exibicao");
+    const subtituloExibicao = $("#subtitulo-exibicao");
+    const fraseExibicao = $("#frase-exibicao");
+    const fotoPerfilPreview = $("#foto-perfil-preview");
+    const profilePlaceholder = $("#profile-placeholder");
+    const pinInput = $("#pinInput");
+    const lockScreen = $("#lockScreen");
+    const themeSelect = $("#themeSelect");
+    const musicPlayer = $("#musicPlayer");
+
+    function mostrarStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle("error", isError);
+    }
+
+    function abrirBanco() {
+      return new Promise((resolve, reject) => {
+        if (!("indexedDB" in window)) {
+          reject(new Error("Este navegador não oferece suporte ao IndexedDB."));
+          return;
+        }
+        const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+        request.onupgradeneeded = event => {
+          const database = event.target.result;
+          for (const name of ["memories", "letters", "capsules", "settings", "moods"]) {
+            if (!database.objectStoreNames.contains(name)) {
+              const options = name === "settings"
+                ? { keyPath: "name" }
+                : { keyPath: "id", autoIncrement: true };
+              database.createObjectStore(name, options);
+            }
+          }
+        };
+        request.onsuccess = () => {
+          db = request.result;
+          db.onversionchange = () => db.close();
+          resolve(db);
+        };
+        request.onerror = () => reject(request.error || new Error("Falha ao abrir o IndexedDB."));
+        request.onblocked = () => reject(new Error("Feche outras abas do Jardim de Memórias e tente novamente."));
+      });
+    }
+
+    function storeRequest(storeName, mode, action) {
+      return new Promise((resolve, reject) => {
+        if (!db) {
+          reject(new Error("O banco ainda não está disponível."));
+          return;
+        }
+        let request;
+        let result;
+        let requestCompleted = false;
+        let transaction;
+        try {
+          transaction = db.transaction([storeName], mode);
+          request = action(transaction.objectStore(storeName));
+        } catch (error) {
+          reject(error);
+          return;
+        }
+        request.onsuccess = () => {
+          requestCompleted = true;
+          result = request.result;
+        };
+        request.onerror = () => reject(request.error || new Error("Falha na solicitação ao IndexedDB."));
+        transaction.oncomplete = () => {
+          if (requestCompleted) resolve(result);
+          else reject(new Error("A transação terminou sem concluir a solicitação."));
+        };
+        transaction.onerror = () => reject(transaction.error || new Error("Falha na transação do IndexedDB."));
+        transaction.onabort = () => reject(transaction.error || new Error("A transação foi cancelada."));
+      });
+    }
+
+    function getAllRecords(storeName) {
+      return storeRequest(storeName, "readonly", store => store.getAll());
+    }
+
+    async function getRole(user) {
+      if (!supabase) throw new Error("Configure as variáveis VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
+      if (!user) throw new Error("Entre na sua conta para continuar.");
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (error) throw error;
+      if (!["admin", "editor"].includes(data.role)) {
+        throw new Error("A conta não possui perfil de editor ou administrador.");
+      }
+      return data.role;
+    }
+
+    async function renderMemories() {
+      if (!activeUser) return carregarMemorias();
+      const { data, error } = await supabase
+        .from("memories")
+        .select("id,user_id,titulo,texto,img,mood,created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const container = $("#memories");
+      container.replaceChildren();
+      if (!data.length) {
+        mostrarVazio(container, "Suas memórias aparecerão aqui.");
+        return;
+      }
+      for (const memory of data) {
+        const card = criarElemento("article", "polaroid");
+        if (memory.img) {
+          const image = criarElemento("img");
+          image.src = memory.img;
+          image.alt = memory.titulo ? `Foto: ${memory.titulo}` : "Foto da memória";
+          card.append(image);
+        }
+        if (memory.mood) card.append(criarElemento("p", "", memory.mood));
+        card.append(criarElemento("h3", "", memory.titulo || "Memória"));
+        card.append(criarElemento("p", "", memory.texto || ""));
+        if (memory.user_id === activeUser.id || activeRole === "admin") {
+          adicionarAcoesRegistro(card, "memories", memory);
+        }
+        container.append(card);
+      }
+    }
+
+    function getSetting(name) {
+      return storeRequest("settings", "readonly", store => store.get(name))
+        .then(record => record ? record.value : undefined);
+    }
+
+    function putSetting(name, value) {
+      return storeRequest("settings", "readwrite", store => store.put({ name, value }));
+    }
+
+    function atualizarExibicao() {
+      tituloExibicao.textContent = tituloInput.value || DEFAULT_TITLE;
+      subtituloExibicao.textContent = subtituloInput.value;
+      fraseExibicao.textContent = fraseInput.value;
+      hero.style.backgroundColor = corPrincipal.value || DEFAULT_COLOR;
+    }
+
+    async function salvarConfiguracao(config) {
+      await putSetting("cover", config);
+    }
+
+    async function carregarConfiguracao() {
+      const config = await getSetting("cover");
+      if (!config) return;
+      tituloInput.value = config.titulo || "";
+      subtituloInput.value = config.subtitulo || "";
+      fraseInput.value = config.frase || "";
+      corPrincipal.value = config.cor || DEFAULT_COLOR;
+      atualizarExibicao();
+    }
+
+    async function carregarCapa() {
+      await carregarConfiguracao();
+      const [perfil, fundo] = await Promise.all([
+        getSetting("profileImage"),
+        getSetting("coverImage")
+      ]);
+      if (perfil) {
+        fotoPerfilPreview.src = perfil;
+        fotoPerfilPreview.style.display = "block";
+        profilePlaceholder.style.display = "none";
+      }
+      if (fundo) hero.style.backgroundImage = `url("${fundo}")`;
+    }
+
+    async function salvarCapa() {
+      const config = {
+        titulo: tituloInput.value,
+        subtitulo: subtituloInput.value,
+        frase: fraseInput.value,
+        cor: corPrincipal.value
+      };
+      await salvarConfiguracao(config);
+      atualizarExibicao();
+      mostrarStatus(status, "Capa salva neste navegador.");
+    }
+
+    function lerArquivo(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => typeof reader.result === "string"
+          ? resolve(reader.result)
+          : reject(new Error("O arquivo não pôde ser lido."));
+        reader.onerror = () => reject(reader.error || new Error("Falha ao ler o arquivo."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function salvarImagem(file, settingName, onLoad) {
+      if (!file) return;
+      if (!file.type.startsWith("image/")) throw new Error("Selecione um arquivo de imagem válido.");
+      const dataUrl = await lerArquivo(file);
+      await putSetting(settingName, dataUrl);
+      onLoad(dataUrl);
+    }
+
+    function criarElemento(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function mostrarVazio(container, message) {
+      container.replaceChildren(criarElemento("p", "empty", message));
+    }
+
+    function adicionarAcoesRegistro(card, storeName, record) {
+      const actions = criarElemento("div", "record-actions");
+      const edit = criarElemento("button", "secondary", "Editar");
+      edit.type = "button";
+      edit.dataset.recordAction = "edit";
+      edit.dataset.store = storeName;
+      edit.dataset.id = String(record.id);
+      const remove = criarElemento("button", "delete-button", "Excluir");
+      remove.type = "button";
+      remove.dataset.recordAction = "delete";
+      remove.dataset.store = storeName;
+      remove.dataset.id = String(record.id);
+      actions.append(edit, remove);
+      card.append(actions);
+    }
+
+    async function salvarMemoria(memoria) {
+      if (activeUser) {
+        const values = {
+          titulo: memoria.titulo,
+          texto: memoria.texto,
+          img: memoria.img || null,
+          mood: memoria.mood || null,
+          user_id: editingMemory?.user_id || activeUser.id
+        };
+        const query = editingMemory
+          ? supabase.from("memories").update(values).eq("id", editingMemory.id)
+          : supabase.from("memories").insert(values);
+        const { error } = await query;
+        if (error) throw error;
+        editingMemory = undefined;
+        $("#memory-submit").textContent = "Guardar memória";
+        $("#memory-cancel").hidden = true;
+        try {
+          const { error: activityError } = await supabase.from("activity").insert({
+            user_id: activeUser.id,
+            user_email: activeUser.email,
+            action: "Criou memória"
+          });
+          if (activityError) throw activityError;
+        } catch (error) {
+          console.error("Memória salva, mas não foi possível registrar a atividade:", error);
+          mostrarStatus($("#memory-status"), "Memória salva, mas o registro de atividade falhou.", true);
+        }
+        await Promise.all([renderMemories(), renderTimeline(), emotionStats()]);
+        return;
+      }
+      await storeRequest("memories", "readwrite", store => editingMemory
+        ? store.put({ ...memoria, id: editingMemory.id })
+        : store.add(memoria));
+      editingMemory = undefined;
+      $("#memory-submit").textContent = "Guardar memória";
+      $("#memory-cancel").hidden = true;
+      await Promise.all([carregarMemorias(), renderTimeline(), emotionStats()]);
+    }
+
+    async function carregarMemorias() {
+      if (activeUser) return renderMemories();
+      const memories = await getAllRecords("memories");
+      const container = $("#memories");
+      container.replaceChildren();
+      if (!memories.length) {
+        mostrarVazio(container, "Suas memórias aparecerão aqui.");
+        return;
+      }
+      for (const memory of memories) {
+        const card = criarElemento("article", "polaroid");
+        if (memory.img) {
+          const image = criarElemento("img");
+          image.src = memory.img;
+          image.alt = memory.titulo ? `Foto: ${memory.titulo}` : "Foto da memória";
+          card.append(image);
+        }
+        if (memory.mood) card.append(criarElemento("p", "", memory.mood));
+        card.append(criarElemento("h3", "", memory.titulo || "Memória"));
+        card.append(criarElemento("p", "", memory.texto || ""));
+        adicionarAcoesRegistro(card, "memories", memory);
+        container.append(card);
+      }
+    }
+
+    async function salvarCarta(titulo, texto) {
+      const letter = {
+        titulo,
+        texto,
+        data: editingLetter ? editingLetter.data : new Date().toISOString()
+      };
+      await storeRequest("letters", "readwrite", store => editingLetter
+        ? store.put({ ...letter, id: editingLetter.id })
+        : store.add(letter));
+      editingLetter = undefined;
+      $("#letter-submit").textContent = "Guardar carta";
+      $("#letter-cancel").hidden = true;
+      await carregarCartas();
+    }
+
+    async function carregarCartas() {
+      const letters = await getAllRecords("letters");
+      const container = $("#letters");
+      container.replaceChildren();
+      if (!letters.length) {
+        mostrarVazio(container, "Suas cartas aparecerão aqui.");
+        return;
+      }
+      for (const letter of letters) {
+        const envelope = criarElemento("article", "envelope");
+        envelope.append(criarElemento("h3", "", letter.titulo || "Carta"));
+        envelope.append(criarElemento("p", "", letter.texto || ""));
+        adicionarAcoesRegistro(envelope, "letters", letter);
+        container.append(envelope);
+      }
+    }
+
+    async function salvarCapsula(data, texto) {
+      const capsule = { data, texto };
+      await storeRequest("capsules", "readwrite", store => editingCapsule
+        ? store.put({ ...capsule, id: editingCapsule.id })
+        : store.add(capsule));
+      editingCapsule = undefined;
+      $("#capsule-submit").textContent = "Guardar cápsula";
+      $("#capsule-cancel").hidden = true;
+      await carregarCapsulas();
+    }
+
+    async function carregarCapsulas() {
+      const capsules = await getAllRecords("capsules");
+      const container = $("#capsuleList");
+      container.replaceChildren();
+      if (!capsules.length) {
+        mostrarVazio(container, "Suas cápsulas do tempo aparecerão aqui.");
+        return;
+      }
+      for (const capsule of capsules) {
+        const card = criarElemento("article", "capsule-card");
+        card.append(criarElemento("strong", "", `📅 ${capsule.data || "Data não informada"}`));
+        card.append(criarElemento("p", "", capsule.texto || ""));
+        adicionarAcoesRegistro(card, "capsules", capsule);
+        container.append(card);
+      }
+    }
+
+    async function editarRegistro(storeName, id) {
+      if (storeName === "memories" && activeUser) {
+        const { data: record, error } = await supabase
+          .from("memories")
+          .select("*")
+          .eq("id", id)
+          .single();
+        if (error) throw error;
+        if (record.user_id !== activeUser.id && activeRole !== "admin") {
+          throw new Error("Você não pode editar esta memória.");
+        }
+        editingMemory = record;
+        $("#memory-title").value = record.titulo || "";
+        $("#memory-text").value = record.texto || "";
+        $("#memory-mood").value = record.mood || "";
+        $("#memory-image").value = "";
+        $("#memory-submit").textContent = "Salvar alterações";
+        $("#memory-cancel").hidden = false;
+        $("#memory-form").scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      const records = await getAllRecords(storeName);
+      const record = records.find(item => item.id === id);
+      if (!record) throw new Error("Este registro não foi encontrado.");
+
+      if (storeName === "memories") {
+        editingMemory = record;
+        $("#memory-title").value = record.titulo || "";
+        $("#memory-text").value = record.texto || "";
+        $("#memory-mood").value = record.mood || "";
+        $("#memory-image").value = "";
+        $("#memory-submit").textContent = "Salvar alterações";
+        $("#memory-cancel").hidden = false;
+        $("#memory-form").scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (storeName === "letters") {
+        editingLetter = record;
+        $("#letter-title").value = record.titulo || "";
+        $("#letter-text").value = record.texto || "";
+        $("#letter-submit").textContent = "Salvar alterações";
+        $("#letter-cancel").hidden = false;
+        $("#letter-form").scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (storeName === "capsules") {
+        editingCapsule = record;
+        $("#capsule-date").value = record.data || "";
+        $("#capsule-text").value = record.texto || "";
+        $("#capsule-submit").textContent = "Salvar alterações";
+        $("#capsule-cancel").hidden = false;
+        $("#capsule-form").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    async function excluirRegistro(storeName, id) {
+      const labels = { memories: "memória", letters: "carta", capsules: "cápsula" };
+      if (!window.confirm(`Excluir esta ${labels[storeName]} permanentemente?`)) return;
+      if (storeName === "memories" && activeUser) {
+        const { error } = await supabase.from("memories").delete().eq("id", id);
+        if (error) throw error;
+        await Promise.all([renderMemories(), renderTimeline(), emotionStats()]);
+        return;
+      }
+      await storeRequest(storeName, "readwrite", store => store.delete(id));
+      if (storeName === "memories") {
+        await Promise.all([carregarMemorias(), renderTimeline(), emotionStats()]);
+      } else if (storeName === "letters") {
+        await Promise.all([carregarCartas(), renderTimeline()]);
+      } else if (storeName === "capsules") {
+        await Promise.all([carregarCapsulas(), renderTimeline()]);
+      }
+    }
+
+    function cancelarEdicao(tipo) {
+      const forms = {
+        memory: ["#memory-form", "#memory-submit", "#memory-cancel", "Guardar memória"],
+        letter: ["#letter-form", "#letter-submit", "#letter-cancel", "Guardar carta"],
+        capsule: ["#capsule-form", "#capsule-submit", "#capsule-cancel", "Guardar cápsula"]
+      };
+      const [formSelector, submitSelector, cancelSelector, label] = forms[tipo];
+      $(formSelector).reset();
+      $(submitSelector).textContent = label;
+      $(cancelSelector).hidden = true;
+      if (tipo === "memory") editingMemory = undefined;
+      if (tipo === "letter") editingLetter = undefined;
+      if (tipo === "capsule") editingCapsule = undefined;
+    }
+
+    async function importarBackup(file) {
+      if (!file || file.type && file.type !== "application/json" && !file.name.toLowerCase().endsWith(".json")) {
+        throw new Error("Selecione um arquivo JSON válido.");
+      }
+      const parsed = JSON.parse(await file.text());
+      const data = parsed.database;
+      const stores = ["memories", "letters", "capsules", "moods", "settings"];
+      if (!data || stores.some(name => !Array.isArray(data[name]))) {
+        throw new Error("O arquivo não possui o formato de backup esperado.");
+      }
+
+      for (const storeName of ["memories", "letters", "capsules", "moods"]) {
+        if (data[storeName].some(record => !record || typeof record !== "object" || Array.isArray(record))) {
+          throw new Error(`Há um registro inválido em ${storeName}.`);
+        }
+      }
+      if (data.settings.some(setting => !setting || typeof setting.name !== "string" || !("value" in setting))) {
+        throw new Error("Há uma configuração inválida no backup.");
+      }
+
+      for (const storeName of ["memories", "letters", "capsules", "moods"]) {
+        for (const record of data[storeName]) {
+          const newRecord = { ...record };
+          delete newRecord.id;
+          await storeRequest(storeName, "readwrite", store => store.add(newRecord));
+        }
+      }
+      for (const setting of data.settings) {
+        await putSetting(setting.name, setting.value);
+      }
+      if (["vintage", "floral", "cottage", "night"].includes(data.theme || parsed.theme)) {
+        localStorage.setItem("jm_theme", data.theme || parsed.theme);
+        restaurarTema();
+      }
+      await Promise.all([
+        carregarCapa(),
+        carregarMemorias(),
+        carregarCartas(),
+        carregarCapsulas(),
+        renderTimeline(),
+        emotionStats(),
+        carregarMusica()
+      ]);
+    }
+
+    async function renderTimeline() {
+      let memories;
+      if (activeUser) {
+        const { data, error } = await supabase
+          .from("memories")
+          .select("titulo,texto,created_at")
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        memories = data.map(item => ({ ...item, data: item.created_at }));
+      } else {
+        memories = await getAllRecords("memories");
+      }
+      const letters = await getAllRecords("letters");
+      const capsules = await getAllRecords("capsules");
+      const entries = [
+        ...memories.map(item => ({ kind: "Memória", date: item.data, title: item.titulo, text: item.texto })),
+        ...letters.map(item => ({ kind: "Carta", date: item.data, title: item.titulo, text: item.texto })),
+        ...capsules.map(item => ({ kind: "Cápsula", date: item.data, title: "Cápsula do tempo", text: item.texto }))
+      ].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+      const timeline = $("#timeline");
+      timeline.replaceChildren();
+      if (!entries.length) {
+        mostrarVazio(timeline, "Seus registros aparecerão aqui em ordem cronológica.");
+        return;
+      }
+      for (const item of entries) {
+        const card = criarElemento("article", "timeline-card");
+        const dateValue = item.date || "";
+        const date = /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+          ? (() => {
+            const [year, month, day] = dateValue.split("-").map(Number);
+            return new Date(year, month - 1, day).toLocaleDateString("pt-BR");
+          })()
+          : dateValue ? new Date(dateValue).toLocaleDateString("pt-BR") : "Sem data";
+        card.append(criarElemento("small", "", `📅 ${date} · ${item.kind}`));
+        if (item.title) card.append(criarElemento("h3", "", item.title));
+        if (item.text) card.append(criarElemento("p", "", item.text));
+        timeline.append(card);
+      }
+    }
+
+    async function emotionStats() {
+      const stats = Object.fromEntries(EMOTIONS.map(mood => [mood, 0]));
+      if (activeUser) {
+        const [moodsResult, memoriesResult] = await Promise.all([
+          supabase.from("moods").select("mood"),
+          supabase.from("memories").select("mood")
+        ]);
+        if (moodsResult.error) throw moodsResult.error;
+        if (memoriesResult.error) throw memoriesResult.error;
+        for (const mood of moodsResult.data) {
+          if (Object.hasOwn(stats, mood.mood)) stats[mood.mood] += 1;
+        }
+        for (const memory of memoriesResult.data) {
+          if (Object.hasOwn(stats, memory.mood)) stats[memory.mood] += 1;
+        }
+      } else {
+        const [moods, memories] = await Promise.all([
+          getAllRecords("moods"),
+          getAllRecords("memories")
+        ]);
+        for (const mood of moods) {
+          if (Object.hasOwn(stats, mood.mood)) stats[mood.mood] += 1;
+        }
+        for (const memory of memories) {
+          if (Object.hasOwn(stats, memory.mood)) stats[memory.mood] += 1;
+        }
+      }
+      const container = $("#emotion-stats");
+      container.replaceChildren();
+      for (const [mood, count] of Object.entries(stats)) {
+        const stat = criarElemento("div", "stat");
+        stat.append(criarElemento("span", "", mood));
+        stat.append(criarElemento("strong", "", String(count)));
+        container.append(stat);
+      }
+      console.log(stats);
+      return stats;
+    }
+
+    function aplicarTema() {
+      const tema = themeSelect.value;
+      document.body.classList.remove("theme-vintage", "theme-floral", "theme-cottage", "theme-night");
+      document.body.classList.add(`theme-${tema}`);
+      localStorage.setItem("jm_theme", tema);
+    }
+
+    function restaurarTema() {
+      const tema = localStorage.getItem("jm_theme");
+      if (["vintage", "floral", "cottage", "night"].includes(tema)) {
+        themeSelect.value = tema;
+        document.body.classList.add(`theme-${tema}`);
+      }
+    }
+
+    function toggleDarkMode() {
+      if (document.body.classList.contains("theme-night")) {
+        themeSelect.value = "vintage";
+      } else {
+        themeSelect.value = "night";
+      }
+      aplicarTema();
+    }
+
+    function definirPin(pin) {
+      localStorage.setItem("jm_pin", pin);
+    }
+
+    function configurarTelaPin() {
+      const pinSaved = localStorage.getItem("jm_pin");
+      $("#lock-title").textContent = pinSaved ? "🔒 Diário Protegido" : "🔒 Defina seu PIN";
+      $("#lock-description").textContent = pinSaved
+        ? "Digite seu PIN para acessar o diário."
+        : "Crie um PIN de 4 a 12 dígitos para este navegador.";
+      $("#pin-submit").textContent = pinSaved ? "Entrar" : "Definir PIN";
+      pinInput.autocomplete = pinSaved ? "current-password" : "new-password";
+    }
+
+    function unlock() {
+      const pinSaved = localStorage.getItem("jm_pin");
+      const pinStatus = $("#pin-status");
+      if (!/^[0-9]{4,12}$/.test(pinInput.value)) {
+        mostrarStatus(pinStatus, "O PIN deve ter de 4 a 12 dígitos.", true);
+        return;
+      }
+      if (pinSaved && pinInput.value !== pinSaved) {
+        mostrarStatus(pinStatus, "PIN incorreto.", true);
+        pinInput.select();
+        return;
+      }
+      if (!pinSaved) definirPin(pinInput.value);
+      lockScreen.hidden = true;
+      $("#lock-button").hidden = false;
+      $("#pin-form").reset();
+    }
+
+    function paraDataUrl(blob) {
+      if (typeof blob === "string") return Promise.resolve(blob);
+      if (!(blob instanceof Blob)) return Promise.resolve(blob);
+      return lerArquivo(blob);
+    }
+
+    async function exportFullBackup() {
+      const [memories, letters, capsules, settings, moods] = await Promise.all([
+        getAllRecords("memories"),
+        getAllRecords("letters"),
+        getAllRecords("capsules"),
+        getAllRecords("settings"),
+        getAllRecords("moods")
+      ]);
+      const serializedSettings = await Promise.all(settings.map(async setting => ({
+        name: setting.name,
+        value: await paraDataUrl(setting.value)
+      })));
+      const data = {
+        exportedAt: new Date().toISOString(),
+        theme: localStorage.getItem("jm_theme"),
+        database: { memories, letters, capsules, moods, settings: serializedSettings }
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "jardim-memorias-v3-backup.json";
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function importarDadosAntigos() {
+      const legacyCover = localStorage.getItem("scrapbook_cover");
+      if (legacyCover && !(await getSetting("cover"))) {
+        try {
+          await putSetting("cover", JSON.parse(legacyCover));
+        } catch (error) {
+          console.error("Não foi possível migrar a capa antiga:", error);
+        }
+      }
+      for (const [oldKey, newKey] of [
+        ["scrapbook_perfil", "profileImage"],
+        ["scrapbook_fundo", "coverImage"]
+      ]) {
+        const value = localStorage.getItem(oldKey);
+        if (value && !(await getSetting(newKey))) await putSetting(newKey, value);
+      }
+      const oldMusic = localStorage.getItem("jm_music");
+      if (oldMusic && !(await getSetting("music"))) await putSetting("music", oldMusic);
+    }
+
+    async function carregarMusica() {
+      const music = await getSetting("music");
+      if (!music) return;
+      if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
+      if (music instanceof Blob) {
+        musicObjectUrl = URL.createObjectURL(music);
+        musicPlayer.src = musicObjectUrl;
+      } else {
+        musicPlayer.src = music;
+      }
+    }
+
+    async function iniciarAplicacao() {
+      try {
+        await abrirBanco();
+        await importarDadosAntigos();
+        await Promise.all([
+          carregarCapa(),
+          carregarMemorias(),
+          carregarCartas(),
+          carregarCapsulas(),
+          renderTimeline(),
+          emotionStats(),
+          carregarMusica()
+        ]);
+        mostrarStatus(databaseStatus, "Banco carregado.");
+      } catch (error) {
+        mostrarStatus(databaseStatus, `Erro ao iniciar o banco: ${error.message}`, true);
+        console.error("Erro ao iniciar o Jardim de Memórias:", error);
+      }
+    }
+
+    async function carregarPainelAdmin() {
+      if (activeRole !== "admin") return;
+      const [{ data: profiles, error: profilesError }, { data: activity, error: activityError }] = await Promise.all([
+        supabase.from("profiles").select("id,email,role,created_at").order("created_at", { ascending: false }),
+        supabase.from("activity").select("user_email,action,created_at").order("created_at", { ascending: false }).limit(30)
+      ]);
+      if (profilesError) throw profilesError;
+      if (activityError) throw activityError;
+      const profileList = $("#profiles-list");
+      profileList.replaceChildren();
+      if (!profiles.length) mostrarVazio(profileList, "Nenhum perfil encontrado.");
+      for (const profile of profiles) {
+        const card = criarElemento("article", "card");
+        card.append(criarElemento("strong", "", profile.email || profile.id));
+        card.append(criarElemento("p", "", `Papel: ${profile.role}`));
+        profileList.append(card);
+      }
+      const activityList = $("#activity-list");
+      activityList.replaceChildren();
+      if (!activity.length) mostrarVazio(activityList, "Nenhuma atividade registrada.");
+      for (const item of activity) {
+        const card = criarElemento("article", "card");
+        card.append(criarElemento("strong", "", item.action));
+        card.append(criarElemento("p", "", `${item.user_email} · ${new Date(item.created_at).toLocaleString("pt-BR")}`));
+        activityList.append(card);
+      }
+    }
+
+    async function conectarUsuario(user) {
+      try {
+        activeRole = await getRole(user);
+        activeUser = user;
+        $("#adminPanel").hidden = activeRole !== "admin";
+        $("#logout-button").hidden = false;
+        $("#login-button").textContent = "Conectado";
+        $("#login-button").disabled = true;
+        mostrarStatus($("#auth-status"), `Conectado como ${user.email} (${activeRole}). Memórias sincronizadas pela nuvem.`);
+        if (memoriesChannel) await supabase.removeChannel(memoriesChannel);
+        memoriesChannel = supabase
+          .channel("memories")
+          .on("postgres_changes", { event: "*", schema: "public", table: "memories" }, async () => {
+            try {
+              await Promise.all([renderMemories(), renderTimeline(), emotionStats()]);
+            } catch (error) {
+              mostrarStatus($("#auth-status"), `Erro ao atualizar memórias em tempo real: ${error.message}`, true);
+              console.error("Erro na atualização em tempo real:", error);
+            }
+          })
+          .subscribe(channelStatus => {
+            if (channelStatus === "CHANNEL_ERROR" || channelStatus === "TIMED_OUT") {
+              mostrarStatus($("#auth-status"), `Canal em tempo real indisponível (${channelStatus}).`, true);
+            }
+          });
+        await Promise.all([renderMemories(), renderTimeline(), emotionStats()]);
+        if (activeRole === "admin") await carregarPainelAdmin();
+      } catch (error) {
+        activeUser = undefined;
+        activeRole = undefined;
+        $("#adminPanel").hidden = true;
+        mostrarStatus($("#auth-status"), `Não foi possível carregar o perfil: ${error.message}`, true);
+        console.error("Erro ao carregar perfil do Supabase:", error);
+      }
+    }
+
+    async function login(email, password) {
+      if (!supabase) {
+        throw new Error("Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no arquivo .env.local e reinicie o servidor.");
+      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await conectarUsuario(data.user);
+    }
+
+    async function addEditor() {
+      if (!supabase || activeRole !== "admin") {
+        throw new Error("Somente um administrador autenticado pode convidar editores.");
+      }
+      const email = $("#editorEmail").value.trim();
+      const { error } = await supabase.functions.invoke("invite-editor", { body: { email } });
+      if (error) throw error;
+      $("#invite-form").reset();
+      await carregarPainelAdmin();
+      mostrarStatus($("#admin-status"), `Convite enviado para ${email}.`);
+    }
+
+    async function sairDaConta() {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      if (memoriesChannel) {
+        await supabase.removeChannel(memoriesChannel);
+        memoriesChannel = undefined;
+      }
+      activeUser = undefined;
+      activeRole = undefined;
+      $("#adminPanel").hidden = true;
+      $("#logout-button").hidden = true;
+      $("#login-button").disabled = false;
+      $("#login-button").textContent = "Entrar";
+      mostrarStatus($("#auth-status"), "Sessão encerrada. A área local continua disponível.");
+      await Promise.all([carregarMemorias(), renderTimeline(), emotionStats()]);
+    }
+
+    $("#cover-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        await salvarCapa();
+      } catch (error) {
+        mostrarStatus(status, `Não foi possível salvar a capa: ${error.message}`, true);
+        console.error("Erro ao salvar a capa:", error);
+      }
+    });
+
+    [tituloInput, subtituloInput, fraseInput, corPrincipal].forEach(input => {
+      input.addEventListener("input", atualizarExibicao);
+    });
+
+    $("#perfil-upload").addEventListener("change", async event => {
+      try {
+        await salvarImagem(event.target.files[0], "profileImage", result => {
+          fotoPerfilPreview.src = result;
+          fotoPerfilPreview.style.display = "block";
+          profilePlaceholder.style.display = "none";
+        });
+        if (event.target.files[0]) mostrarStatus(status, "Foto de perfil salva.");
+      } catch (error) {
+        mostrarStatus(status, error.message, true);
+        console.error("Erro ao salvar a foto de perfil:", error);
+      }
+    });
+
+    $("#capa-upload").addEventListener("change", async event => {
+      try {
+        await salvarImagem(event.target.files[0], "coverImage", result => {
+          hero.style.backgroundImage = `url("${result}")`;
+        });
+        if (event.target.files[0]) mostrarStatus(status, "Imagem de fundo salva.");
+      } catch (error) {
+        mostrarStatus(status, error.message, true);
+        console.error("Erro ao salvar a imagem de fundo:", error);
+      }
+    });
+
+    $("#clear-profile").addEventListener("click", async () => {
+      try {
+        await storeRequest("settings", "readwrite", store => store.delete("profileImage"));
+        fotoPerfilPreview.removeAttribute("src");
+        fotoPerfilPreview.style.display = "none";
+        profilePlaceholder.style.display = "inline";
+        $("#perfil-upload").value = "";
+        mostrarStatus(status, "Foto de perfil removida.");
+      } catch (error) {
+        mostrarStatus(status, `Não foi possível remover a foto: ${error.message}`, true);
+        console.error("Erro ao remover a foto de perfil:", error);
+      }
+    });
+
+    $("#clear-background").addEventListener("click", async () => {
+      try {
+        await storeRequest("settings", "readwrite", store => store.delete("coverImage"));
+        hero.style.backgroundImage = "none";
+        $("#capa-upload").value = "";
+        mostrarStatus(status, "Imagem de fundo removida.");
+      } catch (error) {
+        mostrarStatus(status, `Não foi possível remover a imagem: ${error.message}`, true);
+        console.error("Erro ao remover a imagem de fundo:", error);
+      }
+    });
+
+    $("#reset-button").addEventListener("click", async () => {
+      try {
+        for (const key of ["cover", "profileImage", "coverImage"]) {
+          await storeRequest("settings", "readwrite", store => store.delete(key));
+        }
+        $("#cover-form").reset();
+        corPrincipal.value = DEFAULT_COLOR;
+        hero.style.backgroundImage = "none";
+        fotoPerfilPreview.removeAttribute("src");
+        fotoPerfilPreview.style.display = "none";
+        profilePlaceholder.style.display = "inline";
+        atualizarExibicao();
+        mostrarStatus(status, "Capa restaurada para o padrão.");
+      } catch (error) {
+        mostrarStatus(status, `Não foi possível restaurar a capa: ${error.message}`, true);
+        console.error("Erro ao restaurar a capa:", error);
+      }
+    });
+
+    $("#memory-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const submit = form.querySelector("button[type=submit]");
+      submit.disabled = true;
+      try {
+        const imageFile = $("#memory-image").files[0];
+        const imageData = imageFile
+          ? await lerArquivo(imageFile)
+          : editingMemory ? editingMemory.img || "" : "";
+        await salvarMemoria({
+          titulo: $("#memory-title").value.trim(),
+          texto: $("#memory-text").value.trim(),
+          img: imageData,
+          mood: $("#memory-mood").value,
+          data: new Date().toISOString()
+        });
+        form.reset();
+        mostrarStatus($("#memory-status"), "Memória guardada.");
+      } catch (error) {
+        mostrarStatus($("#memory-status"), `Não foi possível guardar a memória: ${error.message}`, true);
+        console.error("Erro ao salvar memória:", error);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    $("#letter-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      try {
+        await salvarCarta($("#letter-title").value.trim(), $("#letter-text").value.trim());
+        form.reset();
+        mostrarStatus($("#letter-status"), "Carta guardada.");
+      } catch (error) {
+        mostrarStatus($("#letter-status"), `Não foi possível guardar a carta: ${error.message}`, true);
+        console.error("Erro ao salvar carta:", error);
+      }
+    });
+
+    $("#capsule-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      try {
+        await salvarCapsula($("#capsule-date").value, $("#capsule-text").value.trim());
+        form.reset();
+        mostrarStatus($("#capsule-status"), "Cápsula guardada.");
+      } catch (error) {
+        mostrarStatus($("#capsule-status"), `Não foi possível guardar a cápsula: ${error.message}`, true);
+        console.error("Erro ao salvar cápsula:", error);
+      }
+    });
+
+    for (const containerSelector of ["#memories", "#letters", "#capsuleList"]) {
+      $(containerSelector).addEventListener("click", async event => {
+        const button = event.target.closest("button[data-record-action]");
+        if (!button) return;
+        const storeName = button.dataset.store;
+        const id = Number(button.dataset.id);
+        if (!Number.isSafeInteger(id)) return;
+        try {
+          if (button.dataset.recordAction === "edit") {
+            await editarRegistro(storeName, id);
+          } else if (button.dataset.recordAction === "delete") {
+            await excluirRegistro(storeName, id);
+          }
+        } catch (error) {
+          const destination = storeName === "memories"
+            ? $("#memory-status")
+            : storeName === "letters" ? $("#letter-status") : $("#capsule-status");
+          mostrarStatus(destination, `Não foi possível atualizar o registro: ${error.message}`, true);
+          console.error("Erro ao interagir com um registro:", error);
+        }
+      });
+    }
+
+    $("#memory-cancel").addEventListener("click", () => cancelarEdicao("memory"));
+    $("#letter-cancel").addEventListener("click", () => cancelarEdicao("letter"));
+    $("#capsule-cancel").addEventListener("click", () => cancelarEdicao("capsule"));
+
+    $("#mood-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      try {
+        const mood = $("#mood-select").value;
+        if (activeUser) {
+          const { error } = await supabase.from("moods").insert({ mood, user_id: activeUser.id });
+          if (error) throw error;
+        } else {
+          await storeRequest("moods", "readwrite", store => store.add({
+            mood,
+            data: new Date().toISOString()
+          }));
+        }
+        form.reset();
+        await emotionStats();
+        mostrarStatus($("#mood-status"), "Emoção registrada.");
+      } catch (error) {
+        mostrarStatus($("#mood-status"), `Não foi possível registrar a emoção: ${error.message}`, true);
+        console.error("Erro ao registrar emoção:", error);
+      }
+    });
+
+    $("#apply-theme").addEventListener("click", aplicarTema);
+    $("#dark-mode").addEventListener("click", toggleDarkMode);
+    $("#lock-button").addEventListener("click", () => {
+      lockScreen.hidden = false;
+      pinInput.value = "";
+      mostrarStatus($("#pin-status"), "");
+      configurarTelaPin();
+      pinInput.focus();
+    });
+    $("#pin-form").addEventListener("submit", event => {
+      event.preventDefault();
+      unlock();
+    });
+    $("#login-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const button = $("#login-button");
+      button.disabled = true;
+      try {
+        await login($("#email").value.trim(), $("#password").value);
+        $("#password").value = "";
+      } catch (error) {
+        mostrarStatus($("#auth-status"), `Falha no login: ${error.message}`, true);
+        console.error("Falha na autenticação:", error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+    $("#logout-button").addEventListener("click", async () => {
+      try {
+        await sairDaConta();
+      } catch (error) {
+        mostrarStatus($("#auth-status"), `Falha ao encerrar sessão: ${error.message}`, true);
+        console.error("Falha ao encerrar sessão:", error);
+      }
+    });
+    $("#invite-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        await addEditor();
+      } catch (error) {
+        mostrarStatus($("#admin-status"), `Não foi possível convidar editor: ${error.message}`, true);
+        console.error("Falha no convite de editor:", error);
+      }
+    });
+    $("#backup-button").addEventListener("click", async () => {
+      try {
+        await exportFullBackup();
+        mostrarStatus($("#backup-status"), "Backup exportado.");
+      } catch (error) {
+        mostrarStatus($("#backup-status"), `Não foi possível exportar o backup: ${error.message}`, true);
+        console.error("Erro ao exportar backup:", error);
+      }
+    });
+    $("#import-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const file = $("#backup-file").files[0];
+      if (!file) return;
+      if (!window.confirm("Importar adicionará os registros do arquivo aos existentes. Continuar?")) return;
+      try {
+        await importarBackup(file);
+        form.reset();
+        mostrarStatus($("#backup-status"), "Backup importado; registros adicionados.");
+      } catch (error) {
+        mostrarStatus($("#backup-status"), `Não foi possível importar o backup: ${error.message}`, true);
+        console.error("Erro ao importar backup:", error);
+      }
+    });
+
+    $("#musicUpload").addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("audio/")) {
+        mostrarStatus($("#music-status"), "Selecione um arquivo de áudio válido.", true);
+        return;
+      }
+      try {
+        await putSetting("music", file);
+        await carregarMusica();
+        mostrarStatus($("#music-status"), "Música salva neste navegador.");
+      } catch (error) {
+        mostrarStatus($("#music-status"), `Não foi possível salvar a música: ${error.message}`, true);
+        console.error("Erro ao salvar música:", error);
+      }
+    });
+    $("#clear-music").addEventListener("click", async () => {
+      try {
+        await storeRequest("settings", "readwrite", store => store.delete("music"));
+        musicPlayer.pause();
+        musicPlayer.removeAttribute("src");
+        musicPlayer.load();
+        if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
+        musicObjectUrl = undefined;
+        $("#musicUpload").value = "";
+        mostrarStatus($("#music-status"), "Música removida.");
+      } catch (error) {
+        mostrarStatus($("#music-status"), `Não foi possível remover a música: ${error.message}`, true);
+        console.error("Erro ao remover música:", error);
+      }
+    });
+
+    configurarTelaPin();
+    restaurarTema();
+    iniciarAplicacao();
+    if (supabase) {
+      supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          setTimeout(() => conectarUsuario(session.user), 0);
+        } else {
+          activeUser = undefined;
+          activeRole = undefined;
+          $("#adminPanel").hidden = true;
+          $("#logout-button").hidden = true;
+          $("#login-button").disabled = false;
+          $("#login-button").textContent = "Entrar";
+        }
+      });
+    } else {
+      mostrarStatus($("#auth-status"), "Modo local. Configure o Supabase para ativar contas e sincronização na nuvem.");
+      $("#login-button").disabled = true;
+    }
+  </script>
+</body>
+</html>
